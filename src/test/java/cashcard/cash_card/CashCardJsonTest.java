@@ -18,6 +18,7 @@ class CashCardJsonTest {
     private JacksonTester<CashCard> json;
 
     @Test
+    //From obj to Json
     void cashCardSerializationTest() throws IOException {
 
         CashCard cashCard = new CashCard(99L, 123.45);
@@ -32,5 +33,21 @@ class CashCardJsonTest {
         //It dives into the JSON, grabs the value of amount, and confirms it equals 123.45.
         assertThat(json.write(cashCard)).hasJsonPathNumberValue("@.amount");
         assertThat(json.write(cashCard)).extractingJsonPathNumberValue("@.amount").isEqualTo(123.45);
+    }
+
+    @Test
+        //From Json to obj
+    void cashCardDeserializationTest() throws IOException {
+        String expected = """
+           {
+               "id":99,
+               "amount":123.45
+           }
+           """;
+        assertThat(json.parse(expected)).isEqualTo(new CashCard(99L, 123.45));
+
+        assertThat(json.parseObject(expected).id()).isEqualTo(99);
+
+        assertThat(json.parseObject(expected).amount()).isEqualTo(123.45);
     }
 }
